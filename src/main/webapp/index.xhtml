@@ -1,54 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="jakarta.faces.html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="jakarta.faces.core">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:p="http://primefaces.org/ui"
+    xmlns:f="jakarta.faces.core">
 
 <h:head>
     <title>Gestión de Dispositivos - Silarac</title>
+    <style>
+        /* Estilos generales modernos */
+        body {
+            background-color: #f4f6f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 2vw;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Estilo de Tarjetas para el formulario y la tabla */
+        .card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+
+        .header-title {
+            color: #2c3e50;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+        }
+    </style>
 </h:head>
 
 <h:body>
-    <h:form id="form">
-        <p:growl id="messages" showDetail="true" />
+    <div class="container">
+        <h:form id="form">
+            <p:growl id="messages" showDetail="true" life="4000" />
 
-        <p:panel header="Registro de Nuevo Dispositivo">
-            <h:panelGrid columns="2" cellpadding="5">
-                <p:outputLabel for="nombre" value="Nombre:" />
-                <p:inputText id="nombre" value="#{dispositivoBean.dispositivo.nombre}" required="true" />
+            <div class="card">
+                <h2 class="header-title">
+                    <i class="pi pi-box" style="font-size: 1.8rem; margin-right: 12px; color: #3b82f6;"></i>
+                    Registro de Dispositivos
+                </h2>
+                <p:divider style="margin-bottom: 20px;" />
 
-                <p:outputLabel for="marca" value="Marca:" />
-                <p:inputText id="marca" value="#{dispositivoBean.dispositivo.marca}" required="true" />
+                <div class="ui-fluid">
+                    <p:panelGrid columns="4" layout="flex"
+                        columnClasses="col-12 md:col-2, col-12 md:col-4, col-12 md:col-2, col-12 md:col-4"
+                        styleClass="custom-panelgrid" style="border:0px none; background-color:transparent;">
 
-                <p:outputLabel for="precio" value="Precio:" />
-                <p:inputNumber id="precio" value="#{dispositivoBean.dispositivo.precio}" symbol="$" />
+                        <p:outputLabel for="nombre" value="Nombre:" style="font-weight: bold;" />
+                        <p:inputText id="nombre" value="#{dispositivoBean.dispositivo.nombre}" required="true"
+                            placeholder="Ej. Smart Band 10" />
 
-                <p:commandButton value="Guardar" action="#{dispositivoBean.guardar}" 
-                                 update="form:tablaDispositivos messages @form" icon="pi pi-check" />
-            </h:panelGrid>
-        </p:panel>
+                        <p:outputLabel for="marca" value="Marca:" style="font-weight: bold;" />
+                        <p:inputText id="marca" value="#{dispositivoBean.dispositivo.marca}" required="true"
+                            placeholder="Ej. Xiaomi" />
 
-        <p:dataTable id="tablaDispositivos" value="#{dispositivoBean.dispositivos}" var="d" style="margin-top:20px">
-            <p:column headerText="ID">
-                <h:outputText value="#{d.id}" />
-            </p:column>
-            <p:column headerText="Nombre">
-                <h:outputText value="#{d.nombre}" />
-            </p:column>
-            <p:column headerText="Marca">
-                <h:outputText value="#{d.marca}" />
-            </p:column>
-            <p:column headerText="Precio">
-                <h:outputText value="#{d.precio}" />
-            </p:column>
-            <p:column headerText="Acciones">
-                <p:commandButton icon="pi pi-pencil" action="#{dispositivoBean.prepararEditar(d)}" 
-                                 update="form" styleClass="ui-button-warning" />
-                <p:commandButton icon="pi pi-trash" action="#{dispositivoBean.eliminar(d.id)}" 
-                                 update="form:tablaDispositivos messages" styleClass="ui-button-danger" />
-            </p:column>
-        </p:dataTable>
-    </h:form>
+                        <p:outputLabel for="precio" value="Precio:" style="font-weight: bold;" />
+                        <p:inputNumber id="precio" value="#{dispositivoBean.dispositivo.precio}" symbol="$ "
+                            decimalSeparator="." thousandSeparator="," decimalPlaces="2" />
+
+                        <h:outputText value="" />
+
+                        <p:commandButton
+                            value="#{dispositivoBean.dispositivo.id == null ? 'Guardar Nuevo' : 'Actualizar Dispositivo'}"
+                            action="#{dispositivoBean.guardar}" update="@form"
+                            icon="#{dispositivoBean.dispositivo.id == null ? 'pi pi-save' : 'pi pi-refresh'}"
+                            styleClass="#{dispositivoBean.dispositivo.id == null ? 'ui-button-success' : 'ui-button-info'}" />
+                    </p:panelGrid>
+                </div>
+            </div>
+
+            <div class="card">
+                <p:dataTable id="tablaDispositivos" value="#{dispositivoBean.dispositivos}" var="d" paginator="true"
+                    rows="5" paginatorPosition="bottom" emptyMessage="No se encontraron dispositivos registrados."
+                    stripedRows="true" size="medium">
+
+                    <f:facet name="header">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 1.2rem; font-weight: bold;">Inventario Actual</span>
+                            <p:commandButton value="Limpiar / Cancelar" action="#{dispositivoBean.init()}"
+                                update="@form" process="@this" icon="pi pi-times"
+                                styleClass="ui-button-flat ui-button-secondary" />
+                        </div>
+                    </f:facet>
+
+                    <p:column headerText="ID" width="80" style="text-align: center;">
+                        <h:outputText value="#{d.id}" />
+                    </p:column>
+
+                    <p:column headerText="Nombre" sortBy="#{d.nombre}" filterBy="#{d.nombre}"
+                        filterMatchMode="contains">
+                        <h:outputText value="#{d.nombre}" />
+                    </p:column>
+
+                    <p:column headerText="Marca" sortBy="#{d.marca}">
+                        <h:outputText value="#{d.marca}" />
+                    </p:column>
+
+                    <p:column headerText="Precio" sortBy="#{d.precio}" style="text-align: right;">
+                        <h:outputText value="#{d.precio}">
+                            <f:convertNumber type="currency" currencySymbol="$ " locale="en_US" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Acciones" width="150" style="text-align: center;">
+                        <p:commandButton icon="pi pi-pencil" action="#{dispositivoBean.prepararEditar(d)}"
+                            update="@form" process="@this" styleClass="ui-button-warning ui-button-flat rounded-button"
+                            title="Editar" style="margin-right: .5rem" />
+
+                        <p:commandButton icon="pi pi-trash" action="#{dispositivoBean.eliminar(d.id)}" update="@form"
+                            process="@this" styleClass="ui-button-danger ui-button-flat rounded-button"
+                            title="Eliminar">
+                            <p:confirm header="Confirmación"
+                                message="¿Estás seguro de eliminar el dispositivo #{d.nombre}?"
+                                icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </div>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="Cancelar" type="button" styleClass="ui-confirmdialog-no ui-button-flat" />
+                <p:commandButton value="Sí, Eliminar" type="button"
+                    styleClass="ui-confirmdialog-yes ui-button-danger" />
+            </p:confirmDialog>
+
+        </h:form>
+    </div>
 </h:body>
+
 </html>
