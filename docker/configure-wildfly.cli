@@ -1,0 +1,25 @@
+embed-server --std-out=echo --server-config=standalone.xml
+
+# 1) Módulo para el driver (Asegúrate de que el JAR esté en esta ruta en el Dockerfile)
+module add --name=org.postgresql --resources=/tmp/postgresql.jar --dependencies=javax.api,javax.transaction.api
+
+# 2) Registrar el driver
+/subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-class-name=org.postgresql.Driver)
+
+# 3) Datasource (Nombre: demojk)
+data-source add \
+  --name=demojk \
+  --jndi-name=java:/demojkDS \
+  --driver-name=postgresql \
+  --connection-url=jdbc:postgresql://db:5432/demojk \
+  --user-name=postgres \
+  --password=silarac \
+  --min-pool-size=5 \
+  --max-pool-size=30 \
+  --enabled=true
+
+# 4) Validación de conexión (CORREGIDO: Ahora usa el nombre demojk)
+/subsystem=datasources/data-source=demojk:write-attribute(name=valid-connection-checker-class-name,value=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker)
+/subsystem=datasources/data-source=demojk:write-attribute(name=exception-sorter-class-name,value=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter)
+
+stop-embedded-server

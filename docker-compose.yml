@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16
+    container_name: pg_demojk
+    environment:
+      POSTGRES_DB: demojk
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: silarac
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Si se necesita inicializar con un .sql al primer arranque:
+      # - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d demojk"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    container_name: wildfly_app
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+      - "9990:9990"   # consola admin (opcional)
+    environment:
+      # Opcional: si la app lee vars de entorno
+      TZ: America/Guayaquil
+
+volumes:
+  pgdata:
