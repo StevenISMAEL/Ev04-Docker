@@ -1,0 +1,7 @@
+<persistence-unit name="silaracPU" transaction-type="JTA">
+    <jta-data-source>java:/silaracDS</jta-data-source>
+    <class>org.eclipse.model.core.entities.Dispositivo</class>
+    <properties>
+        <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
+    </properties>
+</persistence-unit>
