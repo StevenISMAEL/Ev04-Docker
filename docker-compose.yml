@@ -3,7 +3,7 @@ services:
     image: postgres:16
     container_name: pg_demojk
     environment:
-      POSTGRES_DB: demojk
+      POSTGRES_DB: silarac
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: silarac
     volumes:

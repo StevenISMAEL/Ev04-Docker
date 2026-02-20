@@ -6,20 +6,20 @@ module add --name=org.postgresql --resources=/tmp/postgresql.jar --dependencies=
 # 2) Registrar el driver
 /subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-class-name=org.postgresql.Driver)
 
-# 3) Datasource (Nombre: demojk)
+# 3) Datasource (Nombre: silarac)
 data-source add \
-  --name=demojk \
-  --jndi-name=java:/demojkDS \
+  --name=silarac \
+  --jndi-name=java:/silaracDS \
   --driver-name=postgresql \
-  --connection-url=jdbc:postgresql://db:5432/demojk \
+  --connection-url=jdbc:postgresql://db:5432/silarac \
   --user-name=postgres \
   --password=silarac \
   --min-pool-size=5 \
   --max-pool-size=30 \
   --enabled=true
 
-# 4) Validación de conexión (CORREGIDO: Ahora usa el nombre demojk)
-/subsystem=datasources/data-source=demojk:write-attribute(name=valid-connection-checker-class-name,value=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker)
-/subsystem=datasources/data-source=demojk:write-attribute(name=exception-sorter-class-name,value=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter)
+# 4) Validación de conexión 
+/subsystem=datasources/data-source=silarac:write-attribute(name=valid-connection-checker-class-name,value=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker)
+/subsystem=datasources/data-source=silarac:write-attribute(name=exception-sorter-class-name,value=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter)
 
 stop-embedded-server

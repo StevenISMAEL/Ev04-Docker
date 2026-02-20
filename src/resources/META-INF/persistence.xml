@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
-	<persistence-unit name="demojkDS" transaction-type="JTA">
-		<jta-data-source>java:/demojkDS</jta-data-source>
-		<class>org.eclipse.model.core.entities.Estudiante</class>
+	<persistence-unit name="silaracDS" transaction-type="JTA">
+		<jta-data-source>java:/silaracDS</jta-data-source>
+		<class>org.eclipse.model.core.entities.Dispositivo</class>
 	</persistence-unit>
 </persistence>
